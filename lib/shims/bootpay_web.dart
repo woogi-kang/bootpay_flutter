@@ -5,6 +5,7 @@ library bootpay_api;
 import 'dart:convert';
 
 import 'package:bootpay/api/bootpay_analytics.dart';
+import 'package:bootpay/bootpay_widget_api.dart';
 import 'package:bootpay/model/stat_item.dart';
 import 'package:http/src/response.dart';
 import 'package:js/js.dart';
@@ -29,6 +30,8 @@ external void _requestSubscription(String payload);
 external void _requestAuthentication(String payload);
 @JS()
 external void _setLocale(String locale);
+@JS()
+external void _removePaymentWindow();
 
 @JS()
 external void _dismiss(BuildContext context);
@@ -58,7 +61,7 @@ external set _BootpayAsyncConfirm(Promise Function(String) f);
 @JS('BootpayError')
 external set _BootpayError(void Function(String) f);
 
-class BootpayPlatform extends BootpayApi{
+class BootpayPlatform extends BootpayApi with BootpayWidgetApi {
   BootpayDefaultCallback? _callbackCancel;
   BootpayDefaultCallback? _callbackError;
   BootpayCloseCallback? _callbackClose;
@@ -327,6 +330,21 @@ class BootpayPlatform extends BootpayApi{
   void setLocale(String locale) {
     // TODO: implement setLocale
     _setLocale(locale);
+  }
+
+  @override
+  void removePaymentWindow() {
+    _removePaymentWindow();
+  }
+
+  @override
+  void render({Key? key, BuildContext? context, Payload? payload}) {
+    // TODO: implement render
+  }
+
+  @override
+  void update({Key? key, BuildContext? context, Payload? payload}) {
+    // TODO: implement update
   }
 
 }

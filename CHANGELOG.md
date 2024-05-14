@@ -1,3 +1,22 @@
+## 4.9.6
+* goRouter 사용시 ios 뒤로가기 런타임 에러 개선
+
+## 4.9.5
+* goRouter 사용시 안드로이드 뒤로가기 런타임 에러 개선 
+
+## 4.9.4
+* 상태관리 제거, statless 위젯으로 변경
+* 최적화 
+
+## 4.9.2
+* Bootpay().removePaymentWindow(); 함수 추가 
+
+## 4.9.1
+* android ssl error 시 업데이트 안내하도록 개선 
+
+## 4.9.0 
+* 삼성폰 안드로이드 웹뷰 프리징 현상 개선 
+
 ## 4.8.7-beta.1
 * extra-cupDeposit 삭제, payload에 deposit_price 추가 
 

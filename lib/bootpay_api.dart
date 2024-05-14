@@ -84,6 +84,7 @@ abstract class BootpayApi {
   void transactionConfirm();
   // void removePaymentWindow();
   void dismiss(BuildContext context);
+  void removePaymentWindow();
 
   // 회원 추적 코드
   Future<http.Response> userTrace({
@@ -104,4 +105,9 @@ abstract class BootpayApi {
     String? userId,
     List<StatItem>? items
   });
+
+  // void widgetRender({Key? key, BuildContext? context, String? divId, WidgetPayload? payload});
+  // void widgetUpdate({Key? key, BuildContext? context, Payload? payload});
+  // void widgetRequestPayment({Key? key, BuildContext? context, Payload? payload});
+
 }

@@ -51,6 +51,8 @@ class Extra {
   double? deliveryPrice = 0; //배송료, 상품이 과세면 배송료도 과세, 면세면 배송료도 면세
   bool? useExtraDeduction = false; //문화비 소득 공제 대상 가맹점은 true
 
+  bool? directCardInterest = false; //무이자여부, true면 무이자
+
   Extra({
     this.cardQuota,
     this.sellerName,
@@ -92,7 +94,19 @@ class Extra {
     this.commonEventWebhook,
     this.deliveryPrice,
     this.useExtraDeduction,
-  });
+  }) {
+    this.deliveryDay = this.deliveryDay ?? 1;
+    this.displayCashReceipt = this.displayCashReceipt ?? true;
+    this.separatelyConfirmed = this.separatelyConfirmed ?? true;
+    this.locale = this.locale ?? 'ko';
+    this.openType = this.openType ?? 'redirect';
+    this.useBootpayInappSdk = this.useBootpayInappSdk ?? true;
+    this.redirectUrl = this.redirectUrl ?? 'https://api.bootpay.co.kr/v2';
+    this.displayErrorResult = this.displayErrorResult ?? true;
+    this.subscribeTestPayment = this.subscribeTestPayment ?? true;
+    this.confirmGraceSeconds = this.confirmGraceSeconds ?? 10;
+    this.timeout = this.timeout ?? 30;
+  }
 
   Extra.fromJson(Map<String, dynamic> json) {
     List<String> enableCardCompanies = [];
@@ -151,6 +165,7 @@ class Extra {
     commonEventWebhook = json["common_event_webhook"];
     deliveryPrice = json["delivery_price"];
     useExtraDeduction = json["use_extra_deduction"];
+    directCardInterest = json["direct_card_interest"];
   }
 
   Map<String, dynamic> toJson() => {
@@ -193,6 +208,7 @@ class Extra {
     "common_event_webhook": this.commonEventWebhook,
     "delivery_price": this.deliveryPrice,
     "use_extra_deduction": this.useExtraDeduction,
+    "direct_card_interest": this.directCardInterest
   };
 
   // String getQuotas() {
@@ -229,7 +245,7 @@ class Extra {
       }
     }
 
-    addPart('card_quota', cardQuota);
+    addPart('card_quota', cardQuota ?? '0');
     addPart('seller_name', sellerName);
     addPart('delivery_day', deliveryDay);
     addPart('locale', locale);
@@ -239,7 +255,7 @@ class Extra {
     addPart('app_scheme', appScheme);
     addPart('use_card_point', useCardPoint);
     addPart('direct_card_company', directCardCompany);
-    addPart('direct_card_quota', directCardQuota);
+    addPart('direct_card_quota', directCardQuota ?? '0');
     addPart('use_order_id', useOrderId);
     addPart('international_card_only', internationalCardOnly);
     addPart('phone_carrier', phoneCarrier);
@@ -274,6 +290,8 @@ class Extra {
     addPart('common_event_webhook', commonEventWebhook);
     addPart('delivery_price', deliveryPrice);
     addPart('use_extra_deduction', useExtraDeduction);
+    addPart('direct_card_interest', directCardInterest);
+
     return "{${parts.join(',')}}";
   }
 

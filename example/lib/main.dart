@@ -1,6 +1,8 @@
 
 
 import 'package:bootpay/bootpay.dart';
+import 'package:bootpay/bootpay_webview.dart';
+import 'package:bootpay/bootpay_widget_api.dart';
 import 'package:bootpay/config/bootpay_config.dart';
 import 'package:bootpay/model/browser_open_type.dart';
 import 'package:bootpay/model/extra.dart';
@@ -17,6 +19,8 @@ import 'deprecated/api_provider.dart';
 
 import 'package:intl/intl.dart';
 
+import 'widget_page.dart';
+
 void main() {
   runApp(MaterialApp(
     title: 'Navigation Basics',
@@ -28,6 +32,8 @@ void main() {
 class FirstRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text('First Route'),
@@ -48,12 +54,8 @@ class FirstRoute extends StatelessWidget {
   }
 }
 
-class SecondRoute extends StatefulWidget {
-
-  _SecondRouteState createState() => _SecondRouteState();
-}
-
-class _SecondRouteState extends State<SecondRoute> {
+class SecondRoute extends StatelessWidget {
+  SecondRoute({super.key});
 
   Payload payload = Payload();
   //
@@ -78,10 +80,8 @@ class _SecondRouteState extends State<SecondRoute> {
     );
   }
 
-  @override
-  void initState() {
+  void init() {
     // TODO: implement initState
-    super.initState();
     bootpayAnalyticsUserTrace(); //통계용 함수 호출
     bootpayAnalyticsPageTrace(); //통계용 함수 호출
     bootpayReqeustDataInit(); //결제용 데이터 init
@@ -90,14 +90,17 @@ class _SecondRouteState extends State<SecondRoute> {
 
   @override
   Widget build(BuildContext context) {
+
+    init();
+
     return Scaffold(
-      body: Builder(builder: (BuildContext context) {
-        return Container(
+      body: Container(
           child: SafeArea(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                const TextField(),
                 Center(
                   child: TextButton(
                     onPressed: () => goBootpayTest(context),
@@ -131,6 +134,12 @@ class _SecondRouteState extends State<SecondRoute> {
                     child: Text('웹앱 테스트'),
                   ),
                 ),
+                Center(
+                  child: TextButton(
+                    onPressed: () => goWidgetTest(context),
+                    child: Text('위젯 테스트'),
+                  ),
+                ),
                 SizedBox(height: 10),
                 // Center(
                 //   child: TextButton(
@@ -141,9 +150,8 @@ class _SecondRouteState extends State<SecondRoute> {
               ],
             ),
           ),
-        );
-      }),
-    );
+        )
+      );
   }
 
   ApiProvider _provider = ApiProvider();
@@ -167,6 +175,7 @@ class _SecondRouteState extends State<SecondRoute> {
       context: context,
       payload: payload,
       showCloseButton: false,
+
       // closeButton: Icon(Icons.close, size: 35.0, color: Colors.black54),
       onCancel: (String data)  {
         print('------- onCancel: $data');
@@ -330,6 +339,7 @@ class _SecondRouteState extends State<SecondRoute> {
     extra.appScheme = 'bootpayFlutter';
     extra.directCardCompany = "국민";
     extra.directCardQuota = '00'; //directCardCompany 일 경우 할부정보는 필수
+    // extra.separatelyConfirmed = true;
 
 
     if(BootpayConfig.ENV == -1) {
@@ -345,10 +355,12 @@ class _SecondRouteState extends State<SecondRoute> {
     // extra.carrier = "SKT,KT,LGT"; //본인인증 시 고정할 통신사명
     // extra.ageLimit = 20; // 본인인증시 제한할 최소 나이 ex) 20 -> 20살 이상만 인증이 가능
 
+
     payload.user = user;
     payload.items = itemList;
     payload.extra = extra;
     // payload.extra?.openType = "iframe";
+    
   }
 
 
@@ -365,9 +377,10 @@ class _SecondRouteState extends State<SecondRoute> {
     // print('popup');
     // payload.extra?.openType = 'popup';
 
-    payload.pg = '나이스페이';
-    payload.method = "카드";
+    payload.pg = '페이앱';
+    payload.method = "네이버페이";
 
+    // BootpayConfig.IS_FORCE_WEB = true;
     // BootpayConfig.DISPLAY_WITH_HYBRID_COMPOSITION = true;
 
     // payload.extra?.displayCashReceipt = false;
@@ -378,10 +391,13 @@ class _SecondRouteState extends State<SecondRoute> {
 
     // payload.extra?.depositExpiration = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now().add(const Duration(days: 7)));
 
+
+
     Bootpay().requestPayment(
       context: context,
       payload: payload,
       showCloseButton: false,
+
       // closeButton: Icon(Icons.close, size: 35.0, color: Colors.black54),
       onCancel: (String data) {
         print('------- onCancel 1 : $data');
@@ -391,7 +407,9 @@ class _SecondRouteState extends State<SecondRoute> {
       },
       onClose: () {
         print('------- onClose');
-        //TODO - 원하시는 라우터로 페이지 이동
+        if (!kIsWeb) {
+          Bootpay().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
+        }
       },
       onIssued: (String data) {
         print('------- onIssued: $data');
@@ -407,6 +425,7 @@ class _SecondRouteState extends State<SecondRoute> {
       //   return true;
       // },
       onConfirmAsync: (String data) async {
+        print('------- onConfirmAsync: $data');
 
         return true;
       },
@@ -459,9 +478,7 @@ class _SecondRouteState extends State<SecondRoute> {
       },
       onClose: () {
         print('------- onClose');
-        if (mounted) {
-          Bootpay().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
-        }
+        Bootpay().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
 
         //TODO - 원하시는 라우터로 페이지 이동
       },
@@ -522,9 +539,7 @@ class _SecondRouteState extends State<SecondRoute> {
       },
       onClose: () {
         print('------- onClose');
-        if (mounted) {
-          Bootpay().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
-        }
+        Bootpay().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
 
         //TODO - 원하시는 라우터로 페이지 이동
       },
@@ -586,9 +601,7 @@ class _SecondRouteState extends State<SecondRoute> {
       },
       onClose: () {
         print('------- onClose');
-        if(mounted) {
-          Bootpay().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
-        }
+        Bootpay().dismiss(context); //명시적으로 부트페이 뷰 종료 호출
       },
       onIssued: (String data) {
         print('------- onIssued: $data');
@@ -615,6 +628,14 @@ class _SecondRouteState extends State<SecondRoute> {
       onDone: (String data) {
         print('------- onDone: $data');
       },
+    );
+  }
+
+  void goWidgetTest(BuildContext context) {
+    // BootpayWid
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => WidgetPage()),
     );
   }
 

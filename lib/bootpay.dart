@@ -2,6 +2,7 @@
 import 'package:bootpay/config/bootpay_config.dart';
 
 import 'model/stat_item.dart';
+import 'model/widget/widget_data.dart';
 import 'shims/bootpay_platform.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -18,6 +19,10 @@ typedef BootpayDefaultCallback = void Function(String data);
 typedef BootpayConfirmCallback = bool Function(String data);
 typedef BootpayAsyncConfirmCallback = Future<bool> Function(String data);
 typedef BootpayCloseCallback = void Function();
+
+typedef WidgetResizeCallback = void Function(double height);
+typedef WidgetChangePaymentCallback = void Function(WidgetData? data);
+
 
 class Bootpay extends BootpayApi {
   static final Bootpay _bootpay = Bootpay._internal();
@@ -240,5 +245,10 @@ class Bootpay extends BootpayApi {
   void setLocale(String locale) {
     // TODO: implement setLocale
     _platform.setLocale(locale);
+  }
+
+  @override
+  void removePaymentWindow() {
+    _platform.removePaymentWindow();
   }
 }
